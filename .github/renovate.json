@@ -5,7 +5,8 @@
     ],
     "enabledManagers": [
         "regex",
-        "dockerfile"
+        "dockerfile",
+        "github-actions"
     ],
     "regexManagers": [
         {
