@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # renovate: datasource=github-tags depName=etesync/etesync-web
-      CLIENT_VERSION: v0.1.0
+      CLIENT_VERSION: v0.6.1
       # renovate: datasource=github-tags depName=etesync/etesync-notes
       NOTES_VERSION: v1.1.0
     steps:
