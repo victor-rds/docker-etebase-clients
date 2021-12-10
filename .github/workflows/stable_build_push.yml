@@ -20,7 +20,7 @@ jobs:
       # renovate: datasource=github-tags depName=etesync/etesync-web
       CLIENT_VERSION: v0.1.0
       # renovate: datasource=github-tags depName=etesync/etesync-notes
-      NOTES_VERSION: v1.1.0
+      NOTES_VERSION: v1.7.0
     steps:
       - name: Checkout Dockerfiles and Context
         uses: actions/checkout@v2
