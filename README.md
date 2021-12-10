@@ -1,1 +1,1 @@
-# docker-etebase-clients
+# Docker Etebase/Etesync Clients Bundle

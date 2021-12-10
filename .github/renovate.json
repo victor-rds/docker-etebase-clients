@@ -1,0 +1,36 @@
+
+{
+    "extends": [
+        "config:base"
+    ],
+    "enabledManagers": [
+        "regex"
+    ],
+    "regexManagers": [
+        {
+            "fileMatch": [
+                "^\\versions$"
+            ],
+            "matchStrings": [
+                "CLIENT_VERSION=(?<currentValue>v\\d+(\\.\\d+)*)"
+            ],
+            "depNameTemplate": "etesync/etesync-web",
+            "lookupNameTemplate": "etesync/etesync-web",
+            "datasourceTemplate": "github-tags",
+            "versioningTemplate": "loose"
+            
+        },
+        {
+            "fileMatch": [
+                "^\\versions$"
+            ],
+            "matchStrings": [
+                "NOTES_VERSION=(?<currentValue>v\\d+(\\.\\d+)*)"
+            ],
+            "depNameTemplate": "etesync/etesync-notes",
+            "lookupNameTemplate": "etesync/etesync-notes",
+            "datasourceTemplate": "github-tags",
+            "versioningTemplate": "loose"
+        }
+    ]
+}
