@@ -1,5 +1,5 @@
 
-FROM node:alpine as build
+FROM node:17.2.0-alpine as build
 
 ARG CLIENT_VERSION=master
 ARG CLIENT_REPO="https://github.com/etesync/etesync-web.git"
@@ -21,7 +21,7 @@ RUN apk add --no-cache git; \
     yarn; \
     expo build:web
 
-FROM nginx:alpine
+FROM nginx:1.21.4-alpine
 
 COPY --from=build /etesync-web/build /usr/share/nginx/html/client
 COPY --from=build /etesync-notes/web-build /usr/share/nginx/html/notes

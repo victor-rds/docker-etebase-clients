@@ -1,13 +1,9 @@
 ---
-name: Build and Push
+name: Master Build and Push
 
 on: 
   workflow_dispatch:
     inputs:
-      stable:
-        description: 'Use stable versions?'
-        required: true
-        default: 'false'
       platforms:
         description: 'Set the platforms to build [ linux/amd64, linux/arm64 or linux/arm/v7 ]'
         required: false
@@ -16,38 +12,13 @@ on:
         description: 'Should push?'
         required: false
         default: 'false'
-      only_edge:
-        description: 'Push only edge tag?'
-        required: false
-        default: 'true'
 
 jobs:
   dispatch-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest   
     steps:
       - name: Checkout Dockerfiles and Context
         uses: actions/checkout@v2
-      
-      - id: gen-versions
-        env:
-          STABLE: "${{ github.event.inputs.branch }}"
-        shell: bash
-        run: |
-          source version
-
-          declare TAG
-
-          if [ "${{ env.JSON_INPUT }}" = "true" ]; then
-            TAG="w${CLIENT_VERSION#v}n${NOTES_VERSION#v}"
-          else
-            CLIENT_VERSION="master"
-            NOTES_VERSION="master"
-            TAG="wnmaster"
-          fi
-
-          echo ::set-output name=client_version::${CLIENT_VERSION}
-          echo ::set-output name=notes_version::${NOTES_VERSION}
-          echo ::set-output name=tag::${TAG}
 
       - id: docker_metadata
         uses: docker/metadata-action@v3.6
@@ -58,10 +29,9 @@ jobs:
           images: |
             victorrds/etesync-clients
           flavor: |
-            latest=${{ contains(github.event.inputs.only_edge, 'false') ) }}
+            latest=false
           tags: |
-            type=edge,enable=${{ contains(github.event.inputs.only_edge, 'true') }}
-            type=raw,value=${{ steps.gen-versions.outputs.tag }},enable=${{ contains(github.event.inputs.only_edge, 'false') }}
+            type=edge,enable=true
 
       - name: Set up QEMU
         if: contains(github.event.inputs.platforms, 'linux/arm')
@@ -86,9 +56,6 @@ jobs:
           platforms: ${{ github.event.inputs.platforms }}
           context: .
           file: ./Dockerfile
-          build-args: |
-            CLIENT_VERSION=${{ steps.gen-versions.outputs.client_version }}
-            NOTES_VERSION=${{ steps.gen-versions.outputs.notes_version }}
           tags: ${{ steps.docker_metadata.outputs.tags }}
           labels: ${{ steps.docker_metadata.outputs.labels }}
           push: ${{ contains(github.event.inputs.pushit, 'true') }}

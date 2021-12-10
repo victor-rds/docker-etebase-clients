@@ -1,36 +1,20 @@
-
 {
     "extends": [
         "config:base"
     ],
     "enabledManagers": [
-        "regex"
+        "regex",
+        "dockerfile"
     ],
     "regexManagers": [
         {
             "fileMatch": [
-                "^\\versions$"
+                "^.github/workflows/stable_build_push.yml$"
             ],
             "matchStrings": [
-                "CLIENT_VERSION=(?<currentValue>v\\d+(\\.\\d+)*)"
+                "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s      .*?_VERSION: (?<currentValue>.*)\\s"
             ],
-            "depNameTemplate": "etesync/etesync-web",
-            "lookupNameTemplate": "etesync/etesync-web",
-            "datasourceTemplate": "github-tags",
-            "versioningTemplate": "loose"
-            
-        },
-        {
-            "fileMatch": [
-                "^\\versions$"
-            ],
-            "matchStrings": [
-                "NOTES_VERSION=(?<currentValue>v\\d+(\\.\\d+)*)"
-            ],
-            "depNameTemplate": "etesync/etesync-notes",
-            "lookupNameTemplate": "etesync/etesync-notes",
-            "datasourceTemplate": "github-tags",
-            "versioningTemplate": "loose"
+            "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
         }
     ]
 }
