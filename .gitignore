@@ -1,3 +1,5 @@
 test
-.act
 .actrc
+.env
+.event.json
+.secrets

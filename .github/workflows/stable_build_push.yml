@@ -14,7 +14,7 @@ on:
         default: 'false'
 
 jobs:
-  dispatch-build:
+  dispatch-stable-build:
     runs-on: ubuntu-latest
     env:
       # renovate: datasource=github-tags depName=etesync/etesync-web

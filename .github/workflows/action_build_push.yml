@@ -1,5 +1,5 @@
 ---
-name: Master Build and Push
+name: Github Build and Push
 
 on: 
   workflow_dispatch:
@@ -14,11 +14,52 @@ on:
         default: 'false'
 
 jobs:
-  dispatch-master-build:
-    runs-on: ubuntu-latest   
+  action-stable-build:
+    runs-on: ubuntu-latest
+    env:
+      # renovate: datasource=github-tags depName=etesync/etesync-web
+      CLIENT_VERSION: v0.6.1
+      # renovate: datasource=github-tags depName=etesync/etesync-notes
+      NOTES_VERSION: v1.7.0
     steps:
       - name: Checkout Dockerfiles and Context
         uses: actions/checkout@v2.4.0
+
+      - name: Checkout Etesync Web Client
+        uses: actions/checkout@v2
+        with:
+          repository: etesync/etesync-web.git
+          path: etesync-web
+          ref: ${{ env.CLIENT_VERSION }}
+
+      - name: Checkout Etesync Notes
+        uses: actions/checkout@v2
+        with:
+          repository: etesync/etesync-notes.git
+          path: etesync-notes
+          ref: ${{ env.NOTES_VERSION }}
+      
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '17'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+      
+      - run: |
+          yarn global add expo-cli;
+          export NODE_OPTIONS=--openssl-legacy-provider;
+          cd "$GITHUB_WORKSPACE"/etesync-web;
+          yarn install;
+          yarn build;
+          cd "$GITHUB_WORKSPACE"/etesync-notes;
+          yarn;
+          expo build:web
+
+      - id: gen-tag
+        shell: bash
+        run: |
+          TAG="w${CLIENT_VERSION#v}n${NOTES_VERSION#v}"
+          echo ::set-output name=tag::${TAG}
 
       - id: docker_metadata
         uses: docker/metadata-action@v3.6.2
@@ -29,9 +70,9 @@ jobs:
           images: |
             victorrds/etesync-clients
           flavor: |
-            latest=false
+            latest=true
           tags: |
-            type=edge,enable=true
+            type=raw,value=${{ steps.gen-tag.outputs.tag }}
 
       - name: Set up QEMU
         if: contains(github.event.inputs.platforms, 'linux/arm')
@@ -55,7 +96,10 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           platforms: ${{ github.event.inputs.platforms }}
           context: .
-          file: ./Dockerfile
+          file: ./Dockerfile.nginx
+          build-args: |
+            CLIENT_VERSION=${{ env.CLIENT_VERSION }}
+            NOTES_VERSION=${{ env.NOTES_VERSION }}
           tags: ${{ steps.docker_metadata.outputs.tags }}
           labels: ${{ steps.docker_metadata.outputs.labels }}
           push: ${{ contains(github.event.inputs.pushit, 'true') }}
