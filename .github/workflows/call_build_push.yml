@@ -95,10 +95,9 @@ jobs:
             org.opencontainers.image.authors='Victor R. Santos <victor-rds@users.noreply.github.com>'
           images: |
             victorrds/etesync-clients
-          flavor: |
-            suffix=alpine
           tags: |
-            type=raw,value=${{ steps.gen-tag.outputs.tag }}
+            type=raw,suffix=-alpine,value=${{ steps.gen-tag.outputs.tag }}
+            type=raw,value=alpine
 
       - name: Set up QEMU
         if: contains(inputs.platforms, 'linux/arm')
