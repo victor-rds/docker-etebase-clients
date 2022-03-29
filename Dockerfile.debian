@@ -1,10 +1,10 @@
-FROM nginx:1.21.6-alpine
+FROM nginxinc/nginx-unprivileged:1.21.6
 
 COPY /etesync-web/build /usr/share/nginx/html/client
 COPY /etesync-notes/web-build /usr/share/nginx/html/notes
 COPY context/nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 80
+EXPOSE 8080
 
 
 
