@@ -13,7 +13,7 @@ on:
       notes_version:
         description: "Etesync Notes Version"
         # renovate: datasource=github-tags depName=etesync/etesync-notes
-        default: v1.6.0
+        default: v1.7.0
         required: false
         type: string
       platforms:
