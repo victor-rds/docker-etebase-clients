@@ -11,10 +11,10 @@
     "regexManagers": [
         {
             "fileMatch": [
-                "^.github/workflows/stable_build_push.yml$"
+                "^.github/workflows/manual_build.yml$"
             ],
             "matchStrings": [
-                "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s      .*?_VERSION: (?<currentValue>.*)\\s"
+                "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s        default: (?<currentValue>.*)\\s"
             ],
             "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
         }
