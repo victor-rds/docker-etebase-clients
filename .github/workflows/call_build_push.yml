@@ -138,6 +138,6 @@ jobs:
           build-args: |
             CLIENT_VERSION=${{ env.CLIENT_VERSION }}
             NOTES_VERSION=${{ env.NOTES_VERSION }}
-          tags: ${{ steps.docker_metadata.outputs.tags }}
-          labels: ${{ steps.docker_metadata.outputs.labels }}
+          tags: ${{ steps.docker_metadata_alpine.outputs.tags }}
+          labels: ${{ steps.docker_metadata_alpine.outputs.labels }}
           push: ${{ inputs.pushit }}
