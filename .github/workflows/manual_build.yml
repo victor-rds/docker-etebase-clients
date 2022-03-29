@@ -41,7 +41,6 @@ jobs:
       notes_version: ${{ github.event.inputs.notes_version }}
       platforms: ${{ github.event.inputs.platforms }}
       pushit: ${{ github.event.inputs.pushit == 'true' }}
-      tag: ${{ github.event.inputs.tag }}
     secrets:
       dckr_username: ${{ secrets.DOCKER_USER }}
       dckr_token: ${{ secrets.DOCKER_TOKEN }}
