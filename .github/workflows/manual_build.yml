@@ -7,13 +7,13 @@ on:
       web_version:
         description: "Etesync Web Client"
         # renovate: datasource=github-tags depName=etesync/etesync-web
-        default: v0.5.0
+        default: v0.6.1
         required: false
         type: string
       notes_version:
         description: "Etesync Notes Version"
         # renovate: datasource=github-tags depName=etesync/etesync-notes
-        default: v1.6.0
+        default: v1.7.0
         required: false
         type: string
       platforms:
