@@ -1,0 +1,144 @@
+---
+name: Call Build and Push
+on: 
+  workflow_call:
+    inputs:
+      web_version:
+        description: "Etesync Web Client"
+        default: "master"
+        required: false
+        type: string
+      notes_version:
+        description: "Etesync Notes Version"
+        default: "master"
+        required: false
+        type: string
+      platforms:
+        description: "Set the platforms to build"
+        default: "linux/amd64,linux/arm64,linux/arm/v7"
+        required: false
+        type: string
+      pushit:
+        description: "Should push?"
+        default: false
+        required: false
+        type: boolean
+    secrets:
+      dckr_username:
+        required: true
+      dckr_token:
+        required: true
+
+jobs:
+  action-stable-build:
+    runs-on: ubuntu-latest
+    env:
+      CLIENT_VERSION: ${{ inputs.web_version }}
+      NOTES_VERSION: ${{ inputs.notes_version }}
+    steps:
+      - name: Checkout Dockerfiles and Context
+        uses: actions/checkout@v3.0.0
+
+      - name: Checkout Etesync Web Client
+        uses: actions/checkout@v3
+        with:
+          repository: etesync/etesync-web.git
+          path: etesync-web
+          ref: ${{ env.CLIENT_VERSION }}
+
+      - name: Checkout Etesync Notes
+        uses: actions/checkout@v3
+        with:
+          repository: etesync/etesync-notes.git
+          path: etesync-notes
+          ref: ${{ env.NOTES_VERSION }}
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      - run: |
+          yarn global add expo-cli;
+          cd "$GITHUB_WORKSPACE"/etesync-web;
+          yarn install;
+          yarn build;
+          cd "$GITHUB_WORKSPACE"/etesync-notes;
+          yarn;
+          expo build:web
+
+      - id: gen-tag
+        shell: bash
+        run: |
+          TAG="w${CLIENT_VERSION#v}n${NOTES_VERSION#v}"
+          echo ::set-output name=tag::${TAG}
+
+      - id: docker_metadata_debian
+        uses: docker/metadata-action@v3.6.2
+        with:
+          labels: |
+            maintainer=victor-rds
+            org.opencontainers.image.authors='Victor R. Santos <victor-rds@users.noreply.github.com>'
+          images: |
+            victorrds/etesync-clients
+          flavor: |
+            latest=true
+          tags: |
+            type=raw,value=${{ steps.gen-tag.outputs.tag }}
+
+      - id: docker_metadata_alpine
+        uses: docker/metadata-action@v3.6.2
+        with:
+          labels: |
+            maintainer=victor-rds
+            org.opencontainers.image.authors='Victor R. Santos <victor-rds@users.noreply.github.com>'
+          images: |
+            victorrds/etesync-clients
+          flavor: |
+            suffix=alpine
+          tags: |
+            type=raw,value=${{ steps.gen-tag.outputs.tag }}
+
+      - name: Set up QEMU
+        if: contains(inputs.platforms, 'linux/arm')
+        uses: docker/setup-qemu-action@v1.2.0
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1.6.0
+
+      - name: Login to DockerHub
+        if: inputs.pushit
+        uses: docker/login-action@v1.14.1
+        with:
+          username: ${{ secrets.dckr_username }}
+          password: ${{ secrets.dckr_token }}
+
+      - uses: docker/build-push-action@v2.10.0
+        if: always()
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          platforms: ${{ inputs.platforms }}
+          context: .
+          file: ./Dockerfile.debian
+          build-args: |
+            CLIENT_VERSION=${{ env.CLIENT_VERSION }}
+            NOTES_VERSION=${{ env.NOTES_VERSION }}
+          tags: ${{ steps.docker_metadata_debian.outputs.tags }}
+          labels: ${{ steps.docker_metadata_debian.outputs.labels }}
+          push: ${{ inputs.pushit }}
+
+      - uses: docker/build-push-action@v2.10.0
+        if: always()
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          platforms: ${{ inputs.platforms }}
+          context: .
+          file: ./Dockerfile.alpine
+          build-args: |
+            CLIENT_VERSION=${{ env.CLIENT_VERSION }}
+            NOTES_VERSION=${{ env.NOTES_VERSION }}
+          tags: ${{ steps.docker_metadata.outputs.tags }}
+          labels: ${{ steps.docker_metadata.outputs.labels }}
+          push: ${{ inputs.pushit }}

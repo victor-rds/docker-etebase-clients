@@ -1,0 +1,47 @@
+---
+name: Manual Build and Push
+
+on: 
+  workflow_dispatch:
+    inputs:
+      web_version:
+        description: "Etesync Web Client"
+        # renovate: datasource=github-tags depName=etesync/etesync-web
+        default: v0.5.0
+        required: false
+        type: string
+      notes_version:
+        description: "Etesync Notes Version"
+        # renovate: datasource=github-tags depName=etesync/etesync-notes
+        default: v1.6.0
+        required: false
+        type: string
+      platforms:
+        description: "Platforms to build"
+        required: false
+        default: "linux/amd64,linux/arm64,linux/arm/v7"
+        type: choice
+        options:
+          - "linux/amd64,linux/arm64,linux/arm/v7"
+          - "linux/amd64"
+          - "linux/arm64,linux/arm/v7"
+          - "linux/arm64"
+          - "linux/arm/v7" 
+      pushit:
+        description: "Should push?"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  manual-build:
+    uses: ./.github/workflows/call_build_push.yml
+    with:
+      web_version: ${{ github.event.inputs.web_version }}
+      notes_version: ${{ github.event.inputs.notes_version }}
+      platforms: ${{ github.event.inputs.platforms }}
+      pushit: ${{ github.event.inputs.pushit == 'true' }}
+      tag: ${{ github.event.inputs.tag }}
+    secrets:
+      dckr_username: ${{ secrets.DOCKER_USER }}
+      dckr_token: ${{ secrets.DOCKER_TOKEN }}
