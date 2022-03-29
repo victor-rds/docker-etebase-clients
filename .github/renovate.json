@@ -1,20 +1,42 @@
 {
     "extends": [
-        "config:base",
-        "group:all"
+        "config:base"
     ],
     "enabledManagers": [
         "regex",
         "dockerfile",
         "github-actions"
     ],
+    "packageRules": [
+        {
+            "matchDatasources": [
+                "docker"
+            ],
+            "groupName": "Docker Versions",
+            "groupSlug": "docker"
+        },
+        {
+            "matchDatasources": [
+                "github-actions"
+            ],
+            "groupName": "Github Actions Versions",
+            "groupSlug": "github-actions"
+        },
+        {
+            "matchDatasources": [
+                "regex"
+            ],
+            "groupName": "Etesync Clients Versions",
+            "groupSlug": "etesync-clients-version"
+        }
+    ],
     "regexManagers": [
         {
             "fileMatch": [
-                "^.github/workflows/stable_build_push.yml$"
+                "^.github/workflows/manual_build.yml$"
             ],
             "matchStrings": [
-                "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s      .*?_VERSION: (?<currentValue>.*)\\s"
+                "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s        default: (?<currentValue>.*)\\s"
             ],
             "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
         }
