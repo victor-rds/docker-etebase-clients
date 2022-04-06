@@ -75,7 +75,7 @@ jobs:
           echo ::set-output name=tag::${TAG}
 
       - id: docker_metadata_debian
-        uses: docker/metadata-action@v3.6.2
+        uses: docker/metadata-action@v3.7.0
         with:
           labels: |
             maintainer=victor-rds
@@ -88,7 +88,7 @@ jobs:
             type=raw,value=${{ steps.gen-tag.outputs.tag }}
 
       - id: docker_metadata_alpine
-        uses: docker/metadata-action@v3.6.2
+        uses: docker/metadata-action@v3.7.0
         with:
           labels: |
             maintainer=victor-rds
