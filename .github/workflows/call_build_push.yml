@@ -37,7 +37,7 @@ jobs:
       NOTES_VERSION: ${{ inputs.notes_version }}
     steps:
       - name: Checkout Dockerfiles and Context
-        uses: actions/checkout@v3.0.0
+        uses: actions/checkout@v3.0.1
 
       - name: Checkout Etesync Web Client
         uses: actions/checkout@v3
