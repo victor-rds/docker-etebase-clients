@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest   
     steps:
       - name: Checkout Dockerfiles and Context
-        uses: actions/checkout@v3.0.1
+        uses: actions/checkout@v3.0.2
 
       - id: docker_metadata
         uses: docker/metadata-action@v3.7.0
