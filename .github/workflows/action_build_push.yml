@@ -62,7 +62,7 @@ jobs:
           echo ::set-output name=tag::${TAG}
 
       - id: docker_metadata
-        uses: docker/metadata-action@v3.7.0
+        uses: docker/metadata-action@v3.8.0
         with:
           labels: |
             maintainer=victor-rds
