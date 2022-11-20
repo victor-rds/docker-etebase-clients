@@ -37,7 +37,7 @@ jobs:
       NOTES_VERSION: ${{ inputs.notes_version }}
     steps:
       - name: Checkout Dockerfiles and Context
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3.1.0
 
       - name: Checkout Etesync Web Client
         uses: actions/checkout@v3
@@ -75,7 +75,7 @@ jobs:
           echo ::set-output name=tag::${TAG}
 
       - id: docker_metadata_debian
-        uses: docker/metadata-action@v4.0.1
+        uses: docker/metadata-action@v4.1.1
         with:
           labels: |
             maintainer=victor-rds
@@ -88,7 +88,7 @@ jobs:
             type=raw,value=${{ steps.gen-tag.outputs.tag }}
 
       - id: docker_metadata_alpine
-        uses: docker/metadata-action@v4.0.1
+        uses: docker/metadata-action@v4.1.1
         with:
           labels: |
             maintainer=victor-rds
@@ -101,20 +101,20 @@ jobs:
 
       - name: Set up QEMU
         if: contains(inputs.platforms, 'linux/arm')
-        uses: docker/setup-qemu-action@v2.0.0
+        uses: docker/setup-qemu-action@v2.1.0
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v2.0.0
+        uses: docker/setup-buildx-action@v2.2.1
 
       - name: Login to DockerHub
         if: inputs.pushit
-        uses: docker/login-action@v2.0.0
+        uses: docker/login-action@v2.1.0
         with:
           username: ${{ secrets.dckr_username }}
           password: ${{ secrets.dckr_token }}
 
-      - uses: docker/build-push-action@v3.0.0
+      - uses: docker/build-push-action@v3.2.0
         if: always()
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -128,7 +128,7 @@ jobs:
           labels: ${{ steps.docker_metadata_debian.outputs.labels }}
           push: ${{ inputs.pushit }}
 
-      - uses: docker/build-push-action@v3.0.0
+      - uses: docker/build-push-action@v3.2.0
         if: always()
         with:
           builder: ${{ steps.buildx.outputs.name }}
