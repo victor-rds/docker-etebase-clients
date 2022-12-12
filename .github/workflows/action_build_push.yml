@@ -23,7 +23,7 @@ jobs:
       NOTES_VERSION: v1.7.0
     steps:
       - name: Checkout Dockerfiles and Context
-        uses: actions/checkout@v3.1.0
+        uses: actions/checkout@v3.2.0
 
       - name: Checkout Etesync Web Client
         uses: actions/checkout@v3
