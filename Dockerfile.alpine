@@ -1,4 +1,4 @@
-FROM nginxinc/nginx-unprivileged:1.23.2-alpine
+FROM nginxinc/nginx-unprivileged:1.27.2-alpine
 
 COPY /etesync-web/build /usr/share/nginx/html/client
 COPY /etesync-notes/web-build /usr/share/nginx/html/notes
