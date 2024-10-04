@@ -1,5 +1,5 @@
 
-FROM node:19.3.0-alpine as build
+FROM node:20.18.0-alpine as build
 
 ARG CLIENT_VERSION=master
 ARG CLIENT_REPO="https://github.com/etesync/etesync-web.git"
